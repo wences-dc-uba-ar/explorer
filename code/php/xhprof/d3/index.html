@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<meta charset="utf-8" />
+<body>
+    <script src="//d3js.org/d3.v5.min.js"></script>
+    <script src="https://unpkg.com/@hpcc-js/wasm@0.3.11/dist/index.min.js"></script>
+    <script src="https://unpkg.com/d3-graphviz@3.0.5/build/d3-graphviz.js"></script>
+    <style>
+        #container > * {
+            width: max-content;
+        }
+        .graph {
+            background-color: wheat;
+        }
+        #loadMore {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+        }
+    </style>
+    <div id="container"></div>
+    <button id="loadMore" onclick="loadMore()">load more</button>
+    <script>
+        var lastIndex = 0
+        function loadMore() {
+            fetch(`.example/${lastIndex}.dot`)
+                .then(response => response.text())
+                .then(data => {
+                    let target = document.querySelector("#container")
+                    let div = document.createElement("div")
+                    div.setAttribute("id", "graph-" + lastIndex)
+                    div.setAttribute("class", "graph")
+                    target.appendChild(div)
+                    d3.select("#graph-" + lastIndex)
+                        .graphviz()
+                        .renderDot(data)
+                })
+                .catch(error => {
+                    alert(error)
+                })
+            lastIndex++
+        }
+    </script>
+</body>
